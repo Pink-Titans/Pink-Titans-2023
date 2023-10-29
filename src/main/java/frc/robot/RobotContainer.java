@@ -6,32 +6,26 @@ package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.TeleopDrive;
-import frc.robot.commands.AllianceColour;
 import frc.robot.commands.ArmGoDown;
-import frc.robot.commands.ArmGoUp;
+import frc.robot.commands.ArmHigh;
+import frc.robot.commands.ArmLow;
+import frc.robot.commands.ArmMid;
+import frc.robot.commands.ElevatorHigh;
+import frc.robot.commands.ElevatorLow;
+import frc.robot.commands.ElevatorMid;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.commands.GoToAngle;
 import frc.robot.commands.IntakeCube;
 import frc.robot.commands.OuttakeCube;
-import frc.robot.commands.ShootL2;
-import frc.robot.commands.ShootL3;
-import frc.robot.commands.ShootL3Backwards;
 import frc.robot.commands.StopIntake;
-import frc.robot.commands.StopRoller;
-import frc.robot.commands.ShootL2Backwards;
-import frc.robot.commands.OuttakeCubeBackwards;
-import frc.robot.commands.RollerSpin;
-import frc.robot.commands.SetAllianceColor;
+import frc.robot.commands.ShootCube;
 import frc.robot.commands.IntakeSpin;
-import frc.robot.commands.LongShot;
-import frc.robot.commands.LongShotBackwards;
 import frc.robot.commands.MoveArmTrapezoid;
 import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.subsystems.LightSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
-import frc.robot.subsystems.TopRollerSubsystem;
 import frc.robot.commands.AlignWithDirection;
 
 import java.io.File;
@@ -50,19 +44,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ArmSubsystem;
-import frc.robot.subsystems.TopRollerSubsystem;
 
 import frc.robot.autos.DriveStraight;
 import frc.robot.autos.DoNothing;
 import frc.robot.autos.Balance;
-import frc.robot.autos.BalanceCube;
-import frc.robot.autos.CleanThreePieceRed;
-import frc.robot.autos.CleanTwoPiece;
-import frc.robot.autos.L2CubeMobilityBalance;
-import frc.robot.autos.L3Mobility;
-import frc.robot.autos.L3MobilityBump;
-import frc.robot.autos.ThreePieceExperimental;
-import frc.robot.autos.CubeCubeCleanBlue;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -75,19 +60,11 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   SwerveSubsystem swerve = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve"));
   IntakeSubsystem intake = new IntakeSubsystem();
-  TopRollerSubsystem roller = new TopRollerSubsystem();
   ArmSubsystem arm = new ArmSubsystem();
-  LightSubsystem light = new LightSubsystem();
+  ElevatorSubsystem elevator = new ElevatorSubsystem();
   CommandBase driveStraight = DriveStraight.auto(swerve);
   CommandBase doNothing = DoNothing.auto();
   CommandBase balance = Balance.auto(swerve);
-  CommandBase l2CubeMobilityBalance = L2CubeMobilityBalance.auto(swerve, intake, roller, arm);
-  CommandBase cubeCubeCleanBlue = CubeCubeCleanBlue.auto(swerve, arm, intake, roller);
-  CommandBase l3Mobility = L3Mobility.auto(swerve, arm, intake, roller);
-  CommandBase l3MobilityBump = L3MobilityBump.auto(swerve, arm, intake, roller);
-  CommandBase twoPiece = CleanTwoPiece.auto(swerve, arm, intake, roller);
-  CommandBase cleanThreeRed = ThreePieceExperimental.auto(swerve, arm, intake, roller);
-  CommandBase onePointFiveBalance = BalanceCube.auto(swerve, intake, roller, arm);
 
  
   // Replace with CommandPS4Controller or CommandJoystick if needed
@@ -108,26 +85,17 @@ public class RobotContainer {
     swerve,
     () -> aboveDeadband(-driverController.getLeftY()/inputScale(driverController.getLeftX(), driverController.getLeftY())),
     () -> aboveDeadband(-driverController.getLeftX()/inputScale(driverController.getLeftX(), driverController.getLeftY())),
-    () -> -aboveDeadband(driverController.getRightX()), () -> true, true, false);
+    () -> aboveDeadband(driverController.getRightX()), () -> true, true, false);
 
   swerve.setDefaultCommand(driveCommand);
 
   intake.setDefaultCommand(new StopIntake(intake));
-  roller.setDefaultCommand(new StopRoller(roller));
-  arm.setDefaultCommand(new ArmGoUp(arm));
-  light.setDefaultCommand(new SetAllianceColor(light));
+  //arm.setDefaultCommand(new ArmHigh(arm));
 
 
   m_chooser.setDefaultOption("1 - Drive Straight Auto", driveStraight);
   m_chooser.addOption("2 - Do Nothing", doNothing);
   m_chooser.addOption("3 - Balance", balance);
-  m_chooser.addOption("4 - L2CubeMobBal", l2CubeMobilityBalance);
-  m_chooser.addOption("5 - CubeCubeCLeanBlue", cubeCubeCleanBlue);
-  m_chooser.addOption("6 - L3Mobility", l3Mobility);
-  m_chooser.addOption("7 - L3MobilityBump", l3MobilityBump);
-  m_chooser.addOption("8 - TwoPiece", twoPiece);
-  m_chooser.addOption("9 - ThreePieceCleanRed", cleanThreeRed);
-  m_chooser.addOption("10 - OnePointFiveBalance", onePointFiveBalance);
   SmartDashboard.putData(m_chooser);
 
   }
@@ -148,13 +116,6 @@ public class RobotContainer {
     // cancelling on release.
     driverController.back().onTrue((new InstantCommand(swerve::zeroGyro)));
 
-    driverController.start().whileTrue(
-                new AlignWithDirection(swerve,
-                () -> -driverController.getLeftY()/inputScale(driverController.getLeftX(), driverController.getLeftY()),
-                () -> -driverController.getLeftX()/inputScale(driverController.getLeftX(), driverController.getLeftY()),
-                () -> 0
-                )
-        );
 
       /*   driverController.start().and(driverController.povDown()).whileTrue(
                 new AlignWithDirection(swerve,
@@ -209,37 +170,44 @@ public class RobotContainer {
     //driverController.b().whileTrue(new ArmGoDown(intake, arm, roller));
     //driverController.x().whileTrue(new RollerSpin(roller));
     //driverController.x().whileTrue(new IntakeCube(intake, arm));
-    driverController.rightTrigger()
-    .whileTrue(new IntakeCube(intake, arm, roller));
-
-    driverController.a()
-    .whileTrue(new ShootL2(intake, arm, roller));
 
     driverController.rightBumper()
-    .whileTrue(new ShootL2Backwards(intake, arm, roller));
+    .whileTrue(new IntakeCube(intake));
 
     driverController.leftBumper()
-    .whileTrue(new LongShotBackwards(intake, arm, roller));
+    .whileTrue(new OuttakeCube(intake));
 
-    driverController.povDown()
-    .whileTrue(new ShootL2Backwards(intake, arm, roller));
-
-    driverController.povRight()
-    .whileTrue(new ShootL3Backwards(intake, arm, roller));
-
-    driverController.b()
-    .whileTrue(new ShootL3(intake, arm, roller));
-
-    driverController.y()
-    .whileTrue(new LongShot(intake, arm, roller));
-
-    driverController.rightBumper().whileTrue(new IntakeSpin(intake, Constants.INTAKE_SPEED_CUBE));
-
-    driverController.leftTrigger().whileTrue(new OuttakeCube(intake, arm));
+    driverController.leftTrigger().whileTrue(new ShootCube(intake));
 
 
-    boolean state = m_limitSwitch.get(); //get the state of the switch
-    SmartDashboard.putBoolean("HoldingCube", state); //put it on the dashboard
+    operatorController.y()
+    .whileTrue(new ArmHigh(arm));
+
+    operatorController.x()
+    .whileTrue(new ArmMid(arm));
+
+
+    operatorController.b()
+    .whileTrue(new ArmMid(arm));
+
+
+    operatorController.a()
+    .whileTrue(new ArmLow(arm));
+
+
+    operatorController.povUp()
+    .whileTrue(new ElevatorHigh(elevator));
+
+    operatorController.povLeft()
+    .whileTrue(new ElevatorMid(elevator));
+
+    operatorController.povRight()
+    .whileTrue(new ElevatorMid(elevator));
+
+    operatorController.povDown()
+    .whileTrue(new ElevatorLow(elevator));
+
+
     //state.whileActiveContinuous(new Rumble(driverGamepad, true, true)).whenInactive(new Rumble(driverGamepad, true, false));
     //m_limitSwitch.whileActiveContinuous(new Rumble(driverGamepad, false, true)).whenInactive(new Rumble(driverGamepad, false, false));
 

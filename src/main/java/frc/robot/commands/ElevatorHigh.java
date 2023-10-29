@@ -9,19 +9,16 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 
 import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.subsystems.ArmSubsystem;
-import frc.robot.subsystems.TopRollerSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.Constants;
 
 
-public class ShootL2Backwards extends SequentialCommandGroup{
+public class ElevatorHigh extends SequentialCommandGroup{
     
-    public ShootL2Backwards(IntakeSubsystem intake, ArmSubsystem arm, TopRollerSubsystem roller){
+    public ElevatorHigh(ElevatorSubsystem elevator){
         addCommands(
-            new GoToAngle(arm, Constants.SHOOT_L2_BACKWARDS_POSITION),
-            new RunCommand(() -> intake.cubeShoot(Constants.SHOOT_L2_BACKWARDS_SPEED), intake)
+            new RunCommand(() -> elevator.gotoElevatorPosition(Constants.ELEVATOR_HIGH_POSITION), elevator)
         );
            
     }
-
 }

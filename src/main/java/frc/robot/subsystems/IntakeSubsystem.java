@@ -17,16 +17,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class IntakeSubsystem extends SubsystemBase{
 
-    private CANSparkMax intakeMotor = new CANSparkMax(Constants.INTAKE_MOTOR_ONE, MotorType.kBrushless);
-    private CANSparkMax intakeMotorFollower = new CANSparkMax(Constants.INTAKE_MOTOR_TWO, MotorType.kBrushless);
+    private CANSparkMax intakeMotor = new CANSparkMax(Constants.INTAKE_MOTOR_ONE, MotorType.kBrushed);
+    private CANSparkMax intakeMotorFollower = new CANSparkMax(Constants.INTAKE_MOTOR_TWO, MotorType.kBrushed);
 
     private RelativeEncoder intakeEncoder;
 
     private SparkMaxPIDController intakePID;
-    SimpleMotorFeedforward intakeFF = new SimpleMotorFeedforward(Constants.INTAKE_KS, Constants.INTAKE_KV,
-        Constants.INTAKE_KA);
 
-    DigitalInput limitSwitch = new DigitalInput(1);
     
     public void setupMotors(){
 
@@ -36,9 +33,8 @@ public class IntakeSubsystem extends SubsystemBase{
         intakeMotorFollower.restoreFactoryDefaults();
         intakeMotor.restoreFactoryDefaults();
 
-        intakeMotorFollower.follow(intakeMotor, true);
+        intakeMotorFollower.follow(intakeMotor, false);
 
-        intakeEncoder = intakeMotor.getEncoder();
 
         intakeMotor.setInverted(false);
 
@@ -47,23 +43,6 @@ public class IntakeSubsystem extends SubsystemBase{
         intakeMotor.setSmartCurrentLimit(60);
         intakeMotorFollower.setSmartCurrentLimit(60);
 
-        intakePID = intakeMotor.getPIDController();
-
-        intakeEncoder.setVelocityConversionFactor(1.0 / ((double) Constants.INTAKE_GEAR_RATIO));
-
-        intakePID.setP(Constants.INTAKE_PID0_P, 0);
-        intakePID.setI(Constants.INTAKE_PID0_I, 0);
-        intakePID.setD(Constants.INTAKE_PID0_D, 0);
-        intakePID.setIZone(0, 0);
-        intakePID.setFF(Constants.INTAKE_PID0_F, 0);
-        intakePID.setOutputRange(Constants.OUTPUT_RANGE_MIN, Constants.OUTPUT_RANGE_MAX, 0);
-    
-        intakePID.setP(Constants.INTAKE_PID1_P, 1);
-        intakePID.setI(Constants.INTAKE_PID1_I, 1);
-        intakePID.setD(Constants.INTAKE_PID1_D, 1);
-        intakePID.setIZone(0, 1);
-        intakePID.setFF(Constants.INTAKE_PID1_F, 1);
-        intakePID.setOutputRange(Constants.OUTPUT_RANGE_MIN, Constants.OUTPUT_RANGE_MAX, 1);
     
         intakeMotor.setOpenLoopRampRate(0.01);
         
@@ -71,29 +50,18 @@ public class IntakeSubsystem extends SubsystemBase{
         intakeMotorFollower.burnFlash();
     }
 
-    public void setVelocity(double velocity) {
-      double arbFF;
-      arbFF = intakeFF.calculate(velocity);
-  
-      SmartDashboard.putNumber("Intake arbFF", arbFF);
-      SmartDashboard.putNumber("Intake velocity target", velocity);
-      SmartDashboard.putNumber("Velocity", intakeEncoder.getVelocity());
-  
-      intakePID.setReference(velocity, ControlType.kVelocity, Constants.INTAKE_PID_SLOT_VELOCITY, arbFF,
-          SparkMaxPIDController.ArbFFUnits.kVoltage);
-    }
+    
 
     public void stop(){
-            //intakeMotor.stopMotor();
             setHoldingCurrent();
-          }
+    }
     
     public void stopHoldingCurrent(){
             intakeMotor.set(0);
         }
 
     public void cubeIntake(double speed){
-        setVelocity(speed);
+      intakeMotor.set(1*speed);
       }
 
     public void setHoldingCurrent(){
@@ -101,18 +69,9 @@ public class IntakeSubsystem extends SubsystemBase{
       }
 
     public void cubeOuttake(double speed){
-        setVelocity(-1*speed);
-      }
-    public void cubeShoot(double speed){
-      //intakeMotor.set(-1*speed);
-      //speed = SmartDashboard.getNumber("Intake Speed", 0);
-      setVelocity(speed);
+      intakeMotor.set(-1*speed);
     }
     
-    public void holdingCube(){
-      boolean state = limitSwitch.get(); //get the state of the switch
-      SmartDashboard.putBoolean("Holding Cube", state);
-    }
 
 
     public IntakeSubsystem() {

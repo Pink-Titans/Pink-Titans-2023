@@ -10,17 +10,14 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ArmSubsystem;
-import frc.robot.subsystems.TopRollerSubsystem;
 import frc.robot.Constants;
 
 
-public class LongShotBackwards extends SequentialCommandGroup{
+public class ShootCube extends SequentialCommandGroup{
     
-    public LongShotBackwards(IntakeSubsystem intake, ArmSubsystem arm, TopRollerSubsystem roller){
+    public ShootCube(IntakeSubsystem intake){
         addCommands(
-            new GoToAngle(arm, Constants.SHOOT_BACKWARDS_LONG_POSITION),
-            new RunCommand(() -> intake.cubeShoot(Constants.SHOOT_BACKWARDS_LONG_SPEED), intake)
-
+            new RunCommand(() -> intake.cubeOuttake(Constants.OUTTAKE_FAST), intake)
         );
            
     }

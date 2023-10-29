@@ -10,18 +10,15 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ArmSubsystem;
-import frc.robot.subsystems.TopRollerSubsystem;
 import frc.robot.Constants;
 
 
-public class ShootL3 extends SequentialCommandGroup{
+public class ArmMid extends SequentialCommandGroup{
     
-    public ShootL3(IntakeSubsystem intake, ArmSubsystem arm, TopRollerSubsystem roller){
+    public ArmMid(ArmSubsystem arm){
         addCommands(
-            new GoToAngle(arm, Constants.SHOOT_L3_POSITION),
-            new RunCommand(() -> intake.cubeShoot(Constants.SHOOT_L3_CUBE_SPEED), intake)
+            new RunCommand(() -> arm.gotoArmAngle(Constants.ARM_MID_POSITION), arm)
         );
            
     }
-
 }

@@ -18,8 +18,6 @@ import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.commands.SetAllianceColor;
-import frc.robot.subsystems.LightSubsystem;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -36,22 +34,12 @@ public class Robot extends TimedRobot {
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
    */
-  Alliance alliance = Alliance.Invalid;
 
-   void checkDSUpdate() {
-    alliance = DriverStation.getAlliance();
-
-    // If we have data, and have a new alliance from last time
-    if (DriverStation.isDSAttached() && Constants.currentAlliance != alliance) {
-      Constants.currentAlliance = alliance;
-    }
-} 
   @Override
   public void robotInit() {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
-    checkDSUpdate();
 
     SmartDashboard.putNumber("rotP", 0);
     SmartDashboard.putNumber("rotD", 0);
@@ -89,7 +77,6 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-    checkDSUpdate();
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
@@ -109,7 +96,6 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
-    checkDSUpdate();
   }
 
   /** This function is called periodically during operator control. */

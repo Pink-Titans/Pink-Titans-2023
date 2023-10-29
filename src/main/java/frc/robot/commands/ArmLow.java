@@ -10,15 +10,14 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ArmSubsystem;
-import frc.robot.subsystems.TopRollerSubsystem;
 import frc.robot.Constants;
 
 
-public class RollerSpin extends SequentialCommandGroup{
+public class ArmLow extends SequentialCommandGroup{
     
-    public RollerSpin(TopRollerSubsystem roller){
+    public ArmLow(ArmSubsystem arm){
         addCommands(
-            new RunCommand(() -> roller.cubeIntake(Constants.TOP_ROLLER_SPEED_CUBE), roller)
+            new RunCommand(() -> arm.gotoArmAngle(Constants.ARM_LOW_POSITION), arm)
         );
            
     }
