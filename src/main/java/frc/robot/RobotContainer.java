@@ -141,7 +141,7 @@ public class RobotContainer {
                 )
         );
 */
-    driverController.starts().whileTrue(new RepeatCommand(new InstantCommand(swerve::lock, swerve)));
+    driverController.start().whileTrue(new RepeatCommand(new InstantCommand(swerve::lock, swerve)));
 /*
     driverController.a()
     .onTrue(new ShootL2(intake, arm, roller)).whileFalse(new InstantCommand(() -> arm.gotoArmAngle(Constants.REST_POSITION), arm));
