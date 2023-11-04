@@ -141,7 +141,7 @@ public class RobotContainer {
                 )
         );
 */
-    driverController.x().whileTrue(new RepeatCommand(new InstantCommand(swerve::lock, swerve)));
+    driverController.starts().whileTrue(new RepeatCommand(new InstantCommand(swerve::lock, swerve)));
 /*
     driverController.a()
     .onTrue(new ShootL2(intake, arm, roller)).whileFalse(new InstantCommand(() -> arm.gotoArmAngle(Constants.REST_POSITION), arm));
@@ -180,31 +180,31 @@ public class RobotContainer {
     driverController.leftTrigger().whileTrue(new ShootCube(intake));
 
 
-    operatorController.y()
+    driverController.y()
     .whileTrue(new ArmHigh(arm));
 
-    operatorController.x()
+    driverController.x()
     .whileTrue(new ArmMid(arm));
 
 
-    operatorController.b()
+    driverController.b()
     .whileTrue(new ArmMid(arm));
 
 
-    operatorController.a()
+    driverController.a()
     .whileTrue(new ArmLow(arm));
 
 
-    operatorController.povUp()
+    driverController.povUp()
     .whileTrue(new ElevatorHigh(elevator));
 
-    operatorController.povLeft()
+    driverController.povLeft()
     .whileTrue(new ElevatorMid(elevator));
 
-    operatorController.povRight()
+    driverController.povRight()
     .whileTrue(new ElevatorMid(elevator));
 
-    operatorController.povDown()
+    driverController.povDown()
     .whileTrue(new ElevatorLow(elevator));
 
 
